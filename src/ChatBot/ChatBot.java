@@ -17,8 +17,7 @@ public class ChatBot {
         System.out.println("Enter remainders of dividing your age by 3, 5 and 7.");
         ChatBot chatBot = new ChatBot();
         chatBot.calcAge(s11);
-
-
+        chatBot.numberQuestion(s11);
 
 
     }
@@ -32,5 +31,15 @@ public class ChatBot {
 
     }
 
+    private void numberQuestion(Scanner s11) {
+        int i3 = s11.nextInt();
+        for (int i = 0; i < i3 + 1; i++) {
 
+            System.out.println(i + " !");
+        }
+
+        System.out.println("Let's test your programming knowledge.");
+    }
 }
+
+
