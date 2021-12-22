@@ -1,134 +1,258 @@
 package CoffeeMachine;
 
-import java.util.Scanner;
-class CoffeeMachine{
-    static Scanner scan = new Scanner(System.in);
-    private double coffee_powder, milk, water;
-    private int Coffee_Count = 0;
-    public CoffeeMachine(){
-        this.coffee_powder=0;
-        this.milk=0;
-        this.water=0;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+
+public class CoffeeMachine {
+    private static final List<Drink> drinkList = new ArrayList<Drink>();
+    private static final List<Ingredient> ingredientList = new ArrayList<Ingredient>();
+
+    public static void main(String[] args) {
+        addAllIngredients();
+        addAllDrinks();
+        updateCosts();
+        updateMakeable();
+        display();
+        startIO();
     }
-    private void SetIngredient(){
-        System.out.println("\nFilling...");
-        this.coffee_powder = 500.0;
-        this.milk = 1;
-        this.water= 2;
-        System.out.println("Filling Completed.");
-    }
-    private void GetIngredient(){
-        System.out.println("Available Coffee Power(Gram) "+String.format("%.1f",this.coffee_powder));
-        System.out.println("Available Milk(Liter) "+String.format("%.1f", this.milk));
-        System.out.println("Available Water(Liter) "+String.format("%.1f", this.water));
-    }
-    private void CleanMachine(){
-        System.out.println("\nCleaning Machine...");
-        this.coffee_powder = 0;
-        this.milk = 0;
-        this.water= 0;
-        System.out.println("Cleaning Completed.");
-    }
-    private void makecoffee(){
-        System.out.println("\n ------------------ ");
-        System.out.println("|   Select Type:   |\n ------------------ \n| 1:  Black Coffee |\n| 2:  Milk Coffee  |\n| 0   to Discard   |");
-        System.out.println(" ------------------ \n");
-        char t = scan.next().charAt(0);
-        switch(t){
-            case '1':
-                this.BlackCoffee();
-                break;
-            case '2':
-                this.MilkCoffee();
-                break;
-            case '0':
-                break;
-        }
-    }
-    private void BlackCoffee(){
-        if(this.coffee_powder >= 10 && this.water >= 0.2){
-            System.out.println("\nMaking Black Coffee...");
-            System.out.println("\nTaking 10gm of Coffee Powder.");
-            this.coffee_powder = this.coffee_powder - 10;
-            System.out.println("Taking 0.2 liter of Water.");
-            this.water = this.water - 0.2;
-            System.out.println("\nYour Black Coffee is Ready.");
-            this.Coffee_Count++;
-        }
-        else{
-            System.out.println("\nAvailable Coffee Power(Gram) "+String.format("%.1f",this.coffee_powder));
-            System.out.println("Available Water(Liter) "+String.format("%.1f", this.water));
-            System.out.println("\nSome Iteams Are Not Available, Please Fill before Making Coffee.");
-        }
-    }
-    private void MilkCoffee(){
-        if(this.coffee_powder >= 10 && this.milk >= 0.4 && this.water >= 0.2){
-            System.out.println("\nMaking Milk Coffee...");
-            System.out.println("\nTaking 10gm of Coffee Powder.");
-            this.coffee_powder = this.coffee_powder - 10;
-            System.out.println("Taking 0.4 Liter of Milk.");
-            this.milk = this.milk - 0.4;
-            System.out.println("Taking 0.2 liter of Water.");
-            this.water = this.water - 0.2;
-            System.out.println("\nYour Milk Coffee is Ready.");
-            this.Coffee_Count++;
-        }
-        else{
-            System.out.println("\nAvailable Coffee Power(Gram) "+String.format("%.1f",this.coffee_powder));
-            System.out.println("Available Milk(Liter) "+String.format("%.1f", this.milk));
-            System.out.println("Available Water(Liter) "+String.format("%.1f", this.water));
-            System.out.println("\nSome Iteams Are Not Available, Please Fill before Making Coffee.");
-        }
-    }
-    public void start(){
-        System.out.println(" ----------------------------------------------------------------");
-        System.out.println("|                   Coffee Machine                               |");
-        System.out.println(" ----------------------------------------------------------------");
-        System.out.println("\nCurrent Status: ");
-        this.GetIngredient();
-        boolean t = true;
-        while(t){
-            System.out.println("\n -------------------------------- ");
-            System.out.println("|1:     Status of Ingredient     |\n -------------------------------- \n|2:      Fill Ingredient         |\n -------------------------------- \n|3:       Clean Machine          |\n -------------------------------- \n|4:        Make Coffee           |\n -------------------------------- \n|5: How many Coffee We have made?|\n -------------------------------- \n|6:        Exit                  |");
-            System.out.println(" -------------------------------- \n\n");
-            char c = CoffeeMachine.scan.next().charAt(0);
-            switch(c){
-                case '1':
-                    System.out.println("------------- Status ------------");
-                    this.GetIngredient();
-                    System.out.println("---------------------------------");
-                    break;
-                case '2':
-                    this.SetIngredient();
-                    break;
-                case '3':
-                    this.CleanMachine();
-                    break;
-                case '4':
-                    this.makecoffee();
-                    break;
-                case '5':
-                    System.out.println("\nWe Have Made "+this.Coffee_Count+" Coffees.");
-                    break;
-                case '6':
-                    System.out.println("\nExiting...\n");
-                    t = false;
-                    break;
+
+    public static void startIO(){
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String input = "";
+
+        while(true){
+            try {
+
+
+                input = reader.readLine().toLowerCase();
+
+                if(input.equals("")){
+                }else if (input.equals("q")){
+                    System.exit(0);
+                }else if(input.equals("r")){
+                    restockIngredients();
+                    updateMakeable();
+                }else if(Integer.parseInt(input) > 0 && Integer.parseInt(input) <= drinkList.size()){
+                    makeDrink(drinkList.get(Integer.parseInt(input)-1));
+                }else{
+                    throw new IOException();
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid selection: " + input + "\n");
             }
         }
     }
-}
-class MakeCoffee{
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        System.out.println("\nWants to Start Mechine Y or N ?");
-        char d;
-        d = scan.next().charAt(0);
-        if(d == 'Y' || d == 'y'){
-            CoffeeMachine cm = new CoffeeMachine();
-            cm.start();
-            System.out.println("Shutting Down...\n");
-        }else
-            System.out.println("Shutting Down...\n");
+
+    public static void display(){
+
+        System.out.println("Inventory:\n");
+        for (Ingredient i : ingredientList){
+            System.out.println(i.getName() + "," + i.getStock() + "\n");
+        }
+
+        System.out.println("Menu:\n");
+        int count = 1;
+        for (Drink d : drinkList){
+            System.out.printf("%d,%s,$%.2f," + d.getMakeable() + "\n\n", count, d.getName(), d.getCost());
+            count++;
+        }
     }
+
+    public static void updateMakeable(){
+        for (Drink d : drinkList){
+            Map<String, Integer> currRecipe = d.getRecipe();
+            for (Ingredient i : ingredientList){
+                if (currRecipe.containsKey(i.getName()) && i.getStock() < currRecipe.get(i.getName())){
+                    d.setMakeable(false);
+                    break;
+                }
+                d.setMakeable(true);
+            }
+        }
+    }
+
+    public static void updateCosts(){
+        for (Drink d : drinkList){
+            double currCost = 0;
+            Map<String, Integer> currRecipe = d.getRecipe();
+            for (Ingredient i : ingredientList){
+                if (currRecipe.containsKey(i.getName())){
+                    currCost += i.getCost()*currRecipe.get(i.getName());
+                }
+            }
+            d.setCost(currCost);
+        }
+    }
+
+    public static void makeDrink(Drink drink){
+        if(drink.getMakeable()){
+            System.out.println("Dispensing: " + drink.getName() + "\n");
+            for (Ingredient i : ingredientList){
+                if(drink.getRecipe().containsKey(i.getName())){
+                    i.setStock(i.getStock()-drink.getRecipe().get(i.getName()));
+                }
+            }
+        }else{
+            System.out.println("Out of stock: " + drink.getName() + "\n");
+        }
+        updateMakeable();
+        display();
+    }
+
+    public static void restockIngredients(){
+        for(Ingredient i : ingredientList){
+            i.setStock(10);
+        }
+        updateMakeable();
+        display();
+    }
+
+
+    public static void addIngredient(Ingredient ingredient){
+        ingredientList.add(ingredient);
+    }
+
+    public static void addDrink(String name, String[] recipe){
+        drinkList.add(new Drink(name, recipe));
+    }
+
+    public static void addAllIngredients(){
+        addIngredient(new Ingredient("Coffee", 0.75));
+        addIngredient(new Ingredient("Decaf Coffee", 0.75));
+        addIngredient(new Ingredient("Sugar", 0.25));
+        addIngredient(new Ingredient("Cream", 0.25));
+        addIngredient(new Ingredient("Steamed Milk", 0.35));
+        addIngredient(new Ingredient("Foamed Milk", 0.35));
+        addIngredient(new Ingredient("Espresso", 1.10));
+        addIngredient(new Ingredient("Cocoa", 0.90));
+        addIngredient(new Ingredient("Whipped Cream", 1.00));
+
+        Collections.sort(ingredientList);
+    }
+
+    public static void addAllDrinks(){
+        addDrink("Coffee", new String[]{"Coffee", "Coffee", "Coffee", "Sugar", "Cream"});
+        addDrink("Decaf Coffee", new String[]{"Decaf Coffee", "Decaf Coffee", "Decaf Coffee", "Sugar", "Cream"});
+        addDrink("Caffe Latte", new String[]{"Espresso", "Espresso", "Steamed Milk"});
+        addDrink("Caffe Americano", new String[]{"Espresso", "Espresso", "Espresso"});
+        addDrink("Caffe Mocha", new String[]{"Espresso", "Cocoa", "Steamed Milk", "Whipped Cream"});
+        addDrink("Cappuccino", new String[]{"Espresso", "Espresso", "Steamed Milk", "Foamed Milk"});
+
+        Collections.sort(drinkList);
+    }
+    public static class Drink implements Comparable<Drink>{
+        private Map<String, Integer> recipe = new HashMap<String, Integer>();//map ingredients to units per
+        private String name;
+        private double totalCost = 0;
+        private boolean makeable = false;
+
+        public Drink(String name, String[] recipe){
+            this.name = name;
+            setRecipe(recipe);
+        }
+
+        public int compareTo(Drink drink){
+            return name.compareTo(drink.getName());
+        }
+
+        public void setRecipe(String[] recipe){
+            for(String s : recipe){
+                if(this.recipe.containsKey(s)){
+                    this.recipe.put(s, this.recipe.get(s)+1);
+                }else{
+                    this.recipe.put(s, 1);
+                }
+            }
+        }
+
+        public void setName(String name){
+
+            this.name = name;
+        }
+
+        public void setCost(double totalCost){
+
+            this.totalCost = totalCost;
+        }
+
+        public void setMakeable(boolean makeable){
+
+            this.makeable = makeable;
+        }
+
+        public Map<String, Integer> getRecipe(){
+
+            return recipe;
+        }
+
+        public double getCost(){
+
+            return totalCost;
+        }
+
+        public String getName(){
+
+            return name;
+        }
+
+        public boolean getMakeable(){
+
+            return makeable;
+        }
+
+    }
+    public static class Ingredient implements Comparable<Ingredient>{
+        private String name = "";
+        private double cost = 0.00;
+        private int stock = 0;
+
+        public Ingredient(String name, double cost){
+            this.name = name;
+            this.cost = cost;
+            this.stock = 10;
+        }
+
+        public int compareTo(Ingredient ingredient) {
+            return name.compareTo(ingredient.getName());
+        }
+
+        private void setName(String name){
+
+            this.name = name;
+        }
+
+        private void setCost(double cost){
+
+            this.cost = cost;
+        }
+
+        private void setStock(int stock){
+
+            this.stock = stock;
+        }
+
+        private String getName(){
+
+            return name;
+        }
+
+        private double getCost(){
+
+            return cost;
+        }
+
+        private int getStock(){
+
+            return stock;
+        }
+
+    }
+
 }
+
