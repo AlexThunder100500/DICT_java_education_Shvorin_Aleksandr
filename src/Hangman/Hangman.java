@@ -3,24 +3,25 @@ package Hangman;
 import java.util.Scanner;
 
 public class Hangman {
-
     public static void main(String[] args) {
         System.out.println("HANGMAN");
         Scanner sc = new Scanner(System.in);
 
         boolean found;
+        boolean playAgain=true;
         int life=8;
 
-        while (true) {
+        while (playAgain) {
 
             System.out.println(" The game will be available soon. ");
-            System.out.println ("- Guess the word: (S) ");
+            System.out.println ("- Start a new Hangman Game (S) ");
             System.out.println ("- Exit (E) ");
             System.out.println ("Please enter your choice : ");
 
             String answer = sc.nextLine().toUpperCase();
 
             if (answer.equals("E")) {
+                playAgain=false;
             }
             else {
 
@@ -43,8 +44,8 @@ public class Hangman {
                     System.out.println (" Lives left");
 
                     System.out.print ("Your Guess : ");
-                    short guess = (short) sc.nextLine().charAt(0);
-                    guess = (short) Character.toUpperCase(guess);
+                    char guess = sc.nextLine().charAt(0) ;
+                    guess = Character.toUpperCase(guess);
 
                     System.out.println (guess);
 
@@ -55,7 +56,7 @@ public class Hangman {
                         for (j=0;j<word.length();j++) {
 
                             if(word.charAt(j)==guess) {
-                                filler[j]= (char) guess;
+                                filler[j]=guess;
                             }
                         }
                     }
